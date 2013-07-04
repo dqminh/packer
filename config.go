@@ -22,7 +22,8 @@ const defaultConfig = `
 		"amazon-ebs": "packer-builder-amazon-ebs",
 		"digitalocean": "packer-builder-digitalocean",
 		"virtualbox": "packer-builder-virtualbox",
-		"vmware": "packer-builder-vmware"
+		"vmware": "packer-builder-vmware",
+		"lxc": "packer-builder-lxc"
 	},
 
 	"commands": {
