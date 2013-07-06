@@ -17,9 +17,19 @@ func (c *Container) Root() string {
 }
 
 // lxc-create requires sudo permission to create a container at /var/lib/lxc
-func (c *Container) Create() error {
+func (c *Container) Create() (err error) {
 	return exec.Command("sudo", "lxc-create", "-n", c.Name, "-t",
 		c.Template).Run()
+}
+
+func (c *Container) Start() error {
+	return exec.Command("sudo", "lxc-start", "-n", c.Name, "-d").Run()
+}
+
+// 10.0.3.1 is hardcoded lxcbr0 ip
+func (c *Container) Ip() (ip string, err error) {
+	out, err := exec.Command("host", c.Name, "10.0.3.1").CombinedOutput()
+	return string(out), err
 }
 
 func (c *Container) Destroy() error {

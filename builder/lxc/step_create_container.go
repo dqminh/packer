@@ -13,9 +13,12 @@ type stepCreateContainer struct {
 func (s *stepCreateContainer) Run(state map[string]interface{}) multistep.StepAction {
 	config := state["config"].(config)
 	ui := state["ui"].(packer.Ui)
-	s.container = &Container{Name: config.Name, Template: config.Template}
+	s.container = &Container{
+		Name:     config.Name,
+		Template: config.Template,
+	}
 
-	ui.Say("Launching a container with template: " + config.Template)
+	ui.Say("Creating a container with template: " + config.Template)
 	if err := s.container.Create(); err != nil {
 		err := fmt.Errorf("Error creating a container named %s with template %s: %s",
 			config.Name, config.Template, err)
@@ -23,6 +26,16 @@ func (s *stepCreateContainer) Run(state map[string]interface{}) multistep.StepAc
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
+
+	ui.Say("Starting container: " + config.Name)
+	if err := s.container.Start(); err != nil {
+		err := fmt.Errorf("Error starting container named %s with template %s: %s",
+			config.Name, config.Template, err)
+		state["error"] = err
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
+
 	state["container"] = s.container
 	return multistep.ActionContinue
 }
